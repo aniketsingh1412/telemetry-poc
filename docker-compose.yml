@@ -14,7 +14,7 @@ services:
       MYSQL_PASSWORD: telemetry_pass
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./config/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - telemetry-network
 
@@ -36,7 +36,7 @@ services:
     container_name: telemetry-otel-collector
     command: ["--config=/etc/otelcol-contrib/otel-collector.yml"]
     volumes:
-      - ./docker/otel-collector/otel-collector.yml:/etc/otelcol-contrib/otel-collector.yml
+      - ./config/otel-collector/otel-collector.yml:/etc/otelcol-contrib/otel-collector.yml
     ports:
       - "4317:4317"   # OTLP gRPC receiver
       - "4318:4318"   # OTLP HTTP receiver
@@ -54,7 +54,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -76,7 +76,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
     networks:
       - telemetry-network
 
@@ -117,8 +117,8 @@ services:
     image: fluent/fluent-bit:2.2.0
     container_name: telemetry-fluentbit
     volumes:
-      - ./docker/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-      - ./docker/fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf
+      - ./config/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./config/fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
