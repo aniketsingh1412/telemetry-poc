@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.telemetrylearning'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // MySQL Database
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    
+    // OpenTelemetry - minimal working set
+    implementation platform('io.opentelemetry:opentelemetry-bom:1.32.0')
+    implementation 'io.opentelemetry:opentelemetry-api'
+    implementation 'io.opentelemetry:opentelemetry-sdk'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+    implementation 'io.opentelemetry:opentelemetry-exporter-logging'
+    
+    // JSON & Logging with YAML support
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.3'
+    implementation 'ch.qos.logback:logback-classic:1.4.12'
+    
+    // Janino for logback evaluator filters
+    implementation 'org.codehaus.janino:janino:3.1.10'
+}
+
+application {
+    mainClass = 'com.telemetrylearning.TelemetryApp'
+}
+
+task runApp(type: JavaExec) {
+    group = 'application'
+    description = '🚀 Run the simple telemetry application with MySQL'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.telemetrylearning.TelemetryApp'
+    environment 'OTEL_SERVICE_NAME', 'telemetry-learning-production'
+}
+
+task startServices(type: Exec) {
+    group = 'docker'
+    description = '🐳 Start all services (MySQL, Jaeger, Prometheus, Grafana)'
+    commandLine 'docker-compose', 'up', '-d'
+}
+
+task stopServices(type: Exec) {
+    group = 'docker'
+    description = '🛑 Stop all services'
+    commandLine 'docker-compose', 'down'
+}

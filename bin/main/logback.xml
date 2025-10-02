@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    
+    <!-- 🌐 CLOUD-NATIVE CONSOLE LOGGING ONLY -->
+    <!-- Best Practice: Let container orchestrators handle log aggregation -->
+    
+    <!-- 📺 Structured Console Output for Production -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- JSON-like structured format for log aggregators -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [traceId=%X{traceId:-}] [spanId=%X{spanId:-}] [userId=%X{userId:-}] [orderId=%X{orderId:-}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- 🎯 Business Context Logger: High-value events -->
+    <logger name="com.telemetrylearning.service" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- 🗄️ Repository Layer: Database operations -->
+    <logger name="com.telemetrylearning.repository" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- 🔍 Telemetry Layer: Observability internals -->
+    <logger name="com.telemetrylearning.telemetry" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- 🏭 Factory Classes -->
+    <logger name="com.telemetrylearning.factory" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- 🔇 External Library Noise Reduction -->
+    <logger name="io.opentelemetry" level="ERROR"/>
+    <logger name="com.mysql" level="WARN"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+    
+    <!-- 🌍 Root Logger: Console-only for cloud-native architecture -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    
+</configuration>
