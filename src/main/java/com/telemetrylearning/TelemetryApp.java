@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.telemetrylearning.telemetry.TelemetryConstants.*;
 /**
  * Simple REST API server with telemetry using Java's built-in HTTP server
  * - No complex frameworks, just classic Java
@@ -288,7 +289,7 @@ public class TelemetryApp implements HttpHandler {
         server.start();
         
         // Record startup metric
-        metrics.incrementCounter("application.startups.total");
+        metrics.incrementCounter(APPLICATION_STARTUPS_TOTAL);
         
         logger.info("🚀 Server started successfully!");
         logger.info("📋 Available endpoints:");

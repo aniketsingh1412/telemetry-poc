@@ -4,6 +4,8 @@ import com.telemetrylearning.entity.User;
 import com.telemetrylearning.repository.UserRepository;
 import com.telemetrylearning.telemetry.SimpleMetricsRegistry;
 import com.telemetrylearning.telemetry.TracingHelper;
+
+import static com.telemetrylearning.telemetry.TelemetryConstants.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +60,7 @@ public class UserService {
             });
             
             // Record metrics
-            metrics.incrementCounter("user.created.total");
+            metrics.incrementCounter(USER_CREATED_TOTAL);
             tracing.recordBusinessEvent("user.created", "user", user.getId());
             
             logger.info("User created successfully: {} (ID: {})", username, user.getId());
@@ -78,7 +80,7 @@ public class UserService {
         User user = userRepository.findById(userId);
         
         if (user != null) {
-            metrics.incrementCounter("user.found.total");
+            metrics.incrementCounter(USER_FOUND_TOTAL);
         }
         
         return user;
@@ -88,7 +90,7 @@ public class UserService {
         logger.debug("Getting all active users");
         
         List<User> users = userRepository.findActiveUsers();
-        metrics.incrementCounter("user.found.total");
+        metrics.incrementCounter(USER_FOUND_TOTAL);
         
         logger.debug("Found {} active users", users.size());
         return users;
@@ -118,7 +120,7 @@ public class UserService {
         userRepository.saveUser(existingUser);
         
         // Record metrics
-        metrics.incrementCounter("user.updated.total");
+        metrics.incrementCounter(USER_UPDATED_TOTAL);
         
         logger.info("Email updated for user: {} (ID: {})", existingUser.getUsername(), userId);
         return existingUser;

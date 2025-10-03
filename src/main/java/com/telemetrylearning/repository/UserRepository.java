@@ -2,6 +2,8 @@ package com.telemetrylearning.repository;
 
 import com.telemetrylearning.entity.User;
 import com.telemetrylearning.telemetry.SimpleMetricsRegistry;
+
+import static com.telemetrylearning.telemetry.TelemetryConstants.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +48,9 @@ public class UserRepository {
             
             int rowsAffected = stmt.executeUpdate();
             
-            metrics.recordDuration("database.operation.duration", 
+            metrics.recordDuration(DATABASE_OPERATION_DURATION, 
                 System.currentTimeMillis() - startTime, "saveUser");
-            metrics.incrementCounter("database.operations.total");
+            metrics.incrementCounter(DATABASE_OPERATIONS_TOTAL);
             
             logger.debug("Saved user: {} (rows affected: {})", user.getId(), rowsAffected);
             
@@ -79,9 +81,9 @@ public class UserRepository {
                 users.add(user);
             }
             
-            metrics.recordDuration("database.operation.duration", 
+            metrics.recordDuration(DATABASE_OPERATION_DURATION, 
                 System.currentTimeMillis() - startTime, "findActiveUsers");
-            metrics.incrementCounter("database.operations.total");
+            metrics.incrementCounter(DATABASE_OPERATIONS_TOTAL);
             
             logger.debug("Found {} active users", users.size());
             
@@ -112,9 +114,9 @@ public class UserRepository {
                     user.setCreatedAt(rs.getTimestamp("created_at").toInstant());
                     user.setUpdatedAt(rs.getTimestamp("updated_at").toInstant());
                     
-                    metrics.recordDuration("database.operation.duration", 
+                    metrics.recordDuration(DATABASE_OPERATION_DURATION, 
                         System.currentTimeMillis() - startTime, "findById");
-                    metrics.incrementCounter("database.operations.total");
+                    metrics.incrementCounter(DATABASE_OPERATIONS_TOTAL);
                     
                     return user;
                 }

@@ -4,6 +4,8 @@ import com.telemetrylearning.entity.Order;
 import com.telemetrylearning.repository.OrderRepository;
 import com.telemetrylearning.telemetry.SimpleMetricsRegistry;
 import com.telemetrylearning.telemetry.TracingHelper;
+
+import static com.telemetrylearning.telemetry.TelemetryConstants.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +59,12 @@ public class OrderService {
         orderRepository.saveOrder(order);
         
         // Record metrics
-        metrics.incrementCounter("order.created.total");
-        metrics.recordHistogram("order.value.distribution", amount.doubleValue());
+        metrics.incrementCounter(ORDER_CREATED_TOTAL);
+        metrics.recordHistogram(ORDER_VALUE_DISTRIBUTION, amount.doubleValue());
         
         // Check for high-value orders
         if (order.isHighValue()) {
-            metrics.incrementCounter("business.high_value_orders.total");
+            metrics.incrementCounter(BUSINESS_HIGH_VALUE_ORDERS_TOTAL);
             logger.warn("High-value order created: {} for ${}", order.getId(), amount);
         }
         
@@ -83,14 +85,14 @@ public class OrderService {
             
             // Update order status to processing
             orderRepository.updateOrderStatus(orderId, Order.OrderStatus.PROCESSING);
-            metrics.incrementCounter("order.processed.total");
+            metrics.incrementCounter(ORDER_PROCESSED_TOTAL);
             
             // Simulate more processing
             Thread.sleep(50);
             
             // Complete the order
             orderRepository.updateOrderStatus(orderId, Order.OrderStatus.COMPLETED);
-            metrics.incrementCounter("order.completed.total");
+            metrics.incrementCounter(ORDER_COMPLETED_TOTAL);
             
             logger.info("Order processed successfully: {}", orderId);
             
@@ -117,7 +119,7 @@ public class OrderService {
         Order order = orderRepository.findById(orderId);
         
         if (order != null) {
-            metrics.incrementCounter("order.found.total");
+            metrics.incrementCounter(ORDER_FOUND_TOTAL);
         }
         
         return order;
@@ -131,7 +133,7 @@ public class OrderService {
         }
         
         List<Order> orders = orderRepository.findOrdersByCustomer(customerId);
-        metrics.incrementCounter("order.found.total");
+        metrics.incrementCounter(ORDER_FOUND_TOTAL);
         
         logger.debug("Found {} orders for customer: {}", orders.size(), customerId);
         return orders;
@@ -156,7 +158,7 @@ public class OrderService {
         
         // Cancel the order
         orderRepository.updateOrderStatus(orderId, Order.OrderStatus.CANCELLED);
-        metrics.incrementCounter("order.cancelled.total");
+        metrics.incrementCounter(ORDER_CANCELLED_TOTAL);
         
         logger.info("Order cancelled successfully: {}", orderId);
     }

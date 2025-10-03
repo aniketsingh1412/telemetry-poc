@@ -10,7 +10,7 @@ processors:
   batch:
 
 exporters:
-  logging:them
+  logging:
     loglevel: info
   
   # Use OTLP exporter instead of deprecated jaeger exporter

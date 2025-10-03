@@ -2,6 +2,8 @@ package com.telemetrylearning.repository;
 
 import com.telemetrylearning.entity.Order;
 import com.telemetrylearning.telemetry.SimpleMetricsRegistry;
+
+import static com.telemetrylearning.telemetry.TelemetryConstants.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +50,9 @@ public class OrderRepository {
             
             int rowsAffected = stmt.executeUpdate();
             
-            metrics.recordDuration("database.operation.duration", 
+            metrics.recordDuration(DATABASE_OPERATION_DURATION, 
                 System.currentTimeMillis() - startTime, "saveOrder");
-            metrics.incrementCounter("database.operations.total");
+            metrics.incrementCounter(DATABASE_OPERATIONS_TOTAL);
             
             logger.debug("Saved order: {} (rows affected: {})", order.getId(), rowsAffected);
             
@@ -84,9 +86,9 @@ public class OrderRepository {
                 }
             }
             
-            metrics.recordDuration("database.operation.duration", 
+            metrics.recordDuration(DATABASE_OPERATION_DURATION, 
                 System.currentTimeMillis() - startTime, "findOrdersByCustomer");
-            metrics.incrementCounter("database.operations.total");
+            metrics.incrementCounter(DATABASE_OPERATIONS_TOTAL);
             
             logger.debug("Found {} orders for customer: {}", orders.size(), customerId);
             
@@ -109,9 +111,9 @@ public class OrderRepository {
             
             int rowsAffected = stmt.executeUpdate();
             
-            metrics.recordDuration("database.operation.duration", 
+            metrics.recordDuration(DATABASE_OPERATION_DURATION, 
                 System.currentTimeMillis() - startTime, "updateOrderStatus");
-            metrics.incrementCounter("database.operations.total");
+            metrics.incrementCounter(DATABASE_OPERATIONS_TOTAL);
             
             if (rowsAffected == 0) {
                 throw new RuntimeException("Order not found: " + orderId);
@@ -145,9 +147,9 @@ public class OrderRepository {
                     order.setCreatedAt(rs.getTimestamp("created_at").toInstant());
                     order.setUpdatedAt(rs.getTimestamp("updated_at").toInstant());
                     
-                    metrics.recordDuration("database.operation.duration", 
+                    metrics.recordDuration(DATABASE_OPERATION_DURATION, 
                         System.currentTimeMillis() - startTime, "findById");
-                    metrics.incrementCounter("database.operations.total");
+                    metrics.incrementCounter(DATABASE_OPERATIONS_TOTAL);
                     
                     return order;
                 }
