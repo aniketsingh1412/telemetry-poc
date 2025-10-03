@@ -1,74 +1,129 @@
 package com.telemetrylearning.telemetry;
 
 /**
- * OpenTelemetry metrics constants for the Telemetry Learning system.
- * 
- * This class defines all counter metrics with their descriptions, following
- * industry standards for metric naming and documentation. All metrics are
- * pre-defined to ensure consistency across the application.
+ * Constants for Telemetry metrics used by the telemetry-poc system.
+ *
+ * This class follows the style used in com.linkedin.cfi.telemetry.ContentFetcherMetricsConstants:
+ * - All metric names are defined as public static final String in UPPER_SNAKE_CASE.
+ * - Counter / histogram definition arrays are package-private static final String[][],
+ *   each entry containing {METRIC_NAME_CONSTANT, "description"}.
+ *
+ * Keep this class as a simple constants holder — no instantiation allowed.
  */
 public final class TelemetryConstants {
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private TelemetryConstants() {
-        // Utility class
     }
 
-    /**
-     * Standard unit designation for counter metrics.
-     */
+    /* ---------------------------------------------------------------------
+     * Unit / fallback
+     * ------------------------------------------------------------------ */
+
     public static final String COUNTER_UNIT = "1";
+    public static final String UNKNOWN_METRIC_COUNT = "UNKNOWN_METRIC_COUNT";
 
-    /**
-     * Counter for unknown/unmapped metrics - fallback for missing counters.
-     */
-    public static final String UNKNOWN_METRIC_COUNT = "unknown.metric.count";
+    /* ---------------------------------------------------------------------
+     * User operation counters
+     * ------------------------------------------------------------------ */
 
-    /**
-     * Pre-defined counters with descriptions.
-     * Format: {counter_name, description}
-     */
-    public static final String[][] COUNTERS_WITH_DESCRIPTIONS = {
+    public static final String USER_CREATED_TOTAL = "USER_CREATED_TOTAL";
+    public static final String USER_FOUND_TOTAL = "USER_FOUND_TOTAL";
+    public static final String USER_UPDATED_TOTAL = "USER_UPDATED_TOTAL";
+    public static final String USER_DEACTIVATED_TOTAL = "USER_DEACTIVATED_TOTAL";
+    public static final String USER_ERRORS_TOTAL = "USER_ERRORS_TOTAL";
+
+    /* ---------------------------------------------------------------------
+     * Order operation counters
+     * ------------------------------------------------------------------ */
+
+    public static final String ORDER_CREATED_TOTAL = "ORDER_CREATED_TOTAL";
+    public static final String ORDER_PROCESSED_TOTAL = "ORDER_PROCESSED_TOTAL";
+    public static final String ORDER_COMPLETED_TOTAL = "ORDER_COMPLETED_TOTAL";
+    public static final String ORDER_CANCELLED_TOTAL = "ORDER_CANCELLED_TOTAL";
+    public static final String ORDER_ERRORS_TOTAL = "ORDER_ERRORS_TOTAL";
+
+    /* ---------------------------------------------------------------------
+     * Business counters
+     * ------------------------------------------------------------------ */
+
+    public static final String BUSINESS_HIGH_VALUE_ORDERS_TOTAL = "BUSINESS_HIGH_VALUE_ORDERS_TOTAL";
+    public static final String BUSINESS_TRANSACTIONS_TOTAL = "BUSINESS_TRANSACTIONS_TOTAL";
+
+    /* ---------------------------------------------------------------------
+     * System counters
+     * ------------------------------------------------------------------ */
+
+    public static final String DATABASE_OPERATIONS_TOTAL = "DATABASE_OPERATIONS_TOTAL";
+    public static final String DATABASE_ERRORS_TOTAL = "DATABASE_ERRORS_TOTAL";
+    public static final String HEALTH_CHECKS_TOTAL = "HEALTH_CHECKS_TOTAL";
+    public static final String APPLICATION_STARTUPS_TOTAL = "APPLICATION_STARTUPS_TOTAL";
+
+    /* ---------------------------------------------------------------------
+     * Telemetry system counters
+     * ------------------------------------------------------------------ */
+
+    public static final String TELEMETRY_SPANS_CREATED_TOTAL = "TELEMETRY_SPANS_CREATED_TOTAL";
+    public static final String TELEMETRY_METRICS_RECORDED_TOTAL = "TELEMETRY_METRICS_RECORDED_TOTAL";
+
+    /* ---------------------------------------------------------------------
+     * Counters with descriptions (package-private)
+     * Format: { {METRIC_CONSTANT, "description"}, ... }
+     * ------------------------------------------------------------------ */
+    static final String[][] COUNTERS_WITH_DESCRIPTIONS = {
         // User operations
-        {"user.created.total", "Total number of users created"},
-        {"user.found.total", "Total number of user lookup operations"},
-        {"user.updated.total", "Total number of user update operations"},
-        {"user.deactivated.total", "Total number of users deactivated"},
-        {"user.errors.total", "Total number of user operation errors"},
-        
+        {USER_CREATED_TOTAL, "Total number of users created"},
+        {USER_FOUND_TOTAL, "Total number of user lookup operations"},
+        {USER_UPDATED_TOTAL, "Total number of user update operations"},
+        {USER_DEACTIVATED_TOTAL, "Total number of users deactivated"},
+        {USER_ERRORS_TOTAL, "Total number of user operation errors"},
+
         // Order operations
-        {"order.created.total", "Total number of orders created"},
-        {"order.processed.total", "Total number of orders processed"},
-        {"order.completed.total", "Total number of orders completed"},
-        {"order.cancelled.total", "Total number of orders cancelled"},
-        {"order.errors.total", "Total number of order operation errors"},
-        
+        {ORDER_CREATED_TOTAL, "Total number of orders created"},
+        {ORDER_PROCESSED_TOTAL, "Total number of orders processed"},
+        {ORDER_COMPLETED_TOTAL, "Total number of orders completed"},
+        {ORDER_CANCELLED_TOTAL, "Total number of orders cancelled"},
+        {ORDER_ERRORS_TOTAL, "Total number of order operation errors"},
+
         // Business metrics
-        {"business.high_value_orders.total", "Total number of high-value orders"},
-        {"business.transactions.total", "Total number of business transactions"},
-        
-        // System operations  
-        {"database.operations.total", "Total number of database operations"},
-        {"database.errors.total", "Total number of database errors"},
-        {"health.checks.total", "Total number of health check operations"},
-        {"application.startups.total", "Total number of application startups"},
-        
+        {BUSINESS_HIGH_VALUE_ORDERS_TOTAL, "Total number of high-value orders"},
+        {BUSINESS_TRANSACTIONS_TOTAL, "Total number of business transactions"},
+
+        // System operations
+        {DATABASE_OPERATIONS_TOTAL, "Total number of database operations"},
+        {DATABASE_ERRORS_TOTAL, "Total number of database errors"},
+        {HEALTH_CHECKS_TOTAL, "Total number of health check operations"},
+        {APPLICATION_STARTUPS_TOTAL, "Total number of application startups"},
+
         // Telemetry system
-        {"telemetry.spans.created.total", "Total number of spans created"},
-        {"telemetry.metrics.recorded.total", "Total number of metrics recorded"},
-        
-        // Unknown metrics fallback
-        {UNKNOWN_METRIC_COUNT, "Total number of unknown metric increment attempts"}
+        {TELEMETRY_SPANS_CREATED_TOTAL, "Total number of spans created"},
+        {TELEMETRY_METRICS_RECORDED_TOTAL, "Total number of metrics recorded"},
+
+        // Unknown/fallback
+        {UNKNOWN_METRIC_COUNT, "Total number of unknown metric increment attempts"},
     };
 
+    /* ---------------------------------------------------------------------
+     * Histogram metric names (defined as constants) and descriptions array
+     * ------------------------------------------------------------------ */
+
+    public static final String USER_OPERATION_DURATION = "USER_OPERATION_DURATION";
+    public static final String ORDER_OPERATION_DURATION = "ORDER_OPERATION_DURATION";
+    public static final String ORDER_VALUE_DISTRIBUTION = "ORDER_VALUE_DISTRIBUTION";
+    public static final String DATABASE_OPERATION_DURATION = "DATABASE_OPERATION_DURATION";
+    public static final String BUSINESS_TRANSACTION_AMOUNT = "BUSINESS_TRANSACTION_AMOUNT";
+
     /**
-     * Histogram metrics with descriptions.
-     * Format: {histogram_name, description, unit}
+     * Histogram definitions with descriptions and units.
+     * Format: { {HISTOGRAM_NAME, "description", "unit"}, ... }
      */
-    public static final String[][] HISTOGRAMS_WITH_DESCRIPTIONS = {
-        {"user.operation.duration", "Duration of user operations", "ms"},
-        {"order.operation.duration", "Duration of order operations", "ms"},
-        {"order.value.distribution", "Distribution of order values", "USD"},
-        {"database.operation.duration", "Duration of database operations", "ms"},
-        {"business.transaction.amount", "Distribution of transaction amounts", "USD"}
+    static final String[][] HISTOGRAMS_WITH_DESCRIPTIONS = {
+        {USER_OPERATION_DURATION, "Duration of user operations", "ms"},
+        {ORDER_OPERATION_DURATION, "Duration of order operations", "ms"},
+        {ORDER_VALUE_DISTRIBUTION, "Distribution of order values", "USD"},
+        {DATABASE_OPERATION_DURATION, "Duration of database operations", "ms"},
+        {BUSINESS_TRANSACTION_AMOUNT, "Distribution of transaction amounts", "USD"},
     };
 }
