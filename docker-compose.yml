@@ -115,11 +115,11 @@ services:
 
   # FluentBit - Lightweight Log Shipper (Tails stdout/stderr)
   fluentbit:
-    image: fluent/fluent-bit:2.2.0
+    image: fluent/fluent-bit:latest
     container_name: telemetry-fluentbit
+    command: ["/fluent-bit/bin/fluent-bit", "--config=/fluent-bit/etc/fluent-bit.yaml"]
     volumes:
-      - ./config/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-      - ./config/fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf
+      - ./config/fluentbit/fluent-bit.yaml:/fluent-bit/etc/fluent-bit.yaml
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:

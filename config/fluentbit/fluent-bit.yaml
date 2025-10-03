@@ -1,0 +1,78 @@
+# 🌊 FLUENTBIT FULL YAML CONFIGURATION (v3.2+ FORMAT)
+# Complete configuration with inline parsers - Much cleaner!
+
+service:
+    flush: 1
+    log_level: info
+    daemon: false
+
+# 🔍 PARSERS: Define directly in main config (v3.2+ feature)
+parsers:
+    # 🐳 Docker JSON parser
+    - name: docker
+      format: json
+      time_key: time
+      time_format: '%Y-%m-%dT%H:%M:%S.%L'
+      time_keep: true
+
+    # ☕ Java application log parser (simple version)
+    - name: java_simple
+      format: regex
+      regex: '^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}) \[(?<thread>[^\]]+)\] (?<level>\w+)\s+(?<logger>[^\s]+) \[traceId=(?<traceId>[^\]]*)\] - (?<message>.*)$'
+      time_key: timestamp
+      time_format: '%Y-%m-%d %H:%M:%S.%L'
+      time_keep: true
+
+    # ☕ Java application log parser (full structured version)
+    - name: java_structured
+      format: regex
+      regex: '^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}) \[(?<thread>[^\]]+)\] (?<level>\w+)\s+(?<logger>[^\s]+) \[traceId=(?<traceId>[^\]]*)\] \[spanId=(?<spanId>[^\]]*)\] \[userId=(?<userId>[^\]]*)\] \[orderId=(?<orderId>[^\]]*)\] - (?<message>.*)$'
+      time_key: timestamp
+      time_format: '%Y-%m-%d %H:%M:%S.%L'
+      time_keep: true
+
+# 🚀 PIPELINE: Complete log processing flow
+pipeline:
+    # 📥 INPUT: Where to collect logs
+    inputs:
+        - name: tail
+          path: /var/lib/docker/containers/*/*.log
+          parser: docker
+          tag: docker.*
+          refresh_interval: 5
+          mem_buf_limit: 50MB
+          skip_long_lines: true
+          skip_empty_lines: true
+
+    # 🔄 FILTERS: How to process logs
+    filters:
+        # Filter 1: Only keep telemetry container logs
+        - name: grep
+          match: docker.*
+          regex: container_name /.*telemetry.*/
+
+        # Filter 2: Parse Java application logs
+        - name: parser
+          match: docker.*
+          key_name: log
+          parser: java_simple
+          reserve_data: true
+
+        # Filter 3: Add service metadata
+        - name: modify
+          match: docker.*
+          add: service telemetry-learning-production
+          add: environment development
+
+    # 📤 OUTPUT: Where to send processed logs
+    outputs:
+        - name: es
+          match: docker.*
+          host: elasticsearch
+          port: 9200
+          index: telemetry-logs
+          logstash_format: true
+          logstash_prefix: telemetry-logs
+          replace_dots: true
+          retry_limit: false
+          suppress_type_name: true
